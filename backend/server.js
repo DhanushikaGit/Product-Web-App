@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import productRoutes from "./routes/product.route.js";
 import { connectDB } from "./config/db.js";
+import cors from "cors";
 
 // Load environment variables
 dotenv.config();
@@ -13,6 +14,7 @@ const app = express();
 
 // Middleware to parse JSON body
 app.use(express.json());
+app.use(cors());
 
 
 app.use("/api/products", productRoutes);
