@@ -9,7 +9,9 @@ import {
   CardContent,
   CardActions,
   Button,
+  IconButton,
 } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -21,62 +23,77 @@ function Products() {
       .catch((err) => console.error(err));
   }, []);
 
-  // ✅ Delete product
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-
     try {
       await fetch(`http://localhost:5000/api/products/${id}`, {
         method: "DELETE",
       });
-
-      // remove product from state after delete
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) {
       console.error("Error deleting product:", err);
     }
   };
 
-  // ✅ Edit product (navigate to edit page or open a modal)
   const handleEdit = (id) => {
-    // Example: navigate to /edit-product/:id
     window.location.href = `/edit-product/${id}`;
   };
 
   return (
     <Container>
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Products
+      <Box sx={{ py: 6 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontWeight: 700, textAlign: "center", mb: 4 }}
+        >
+          Our Products
         </Typography>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {products.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product._id}>
-              <Card>
+              <Card
+                sx={{
+                  borderRadius: 3,
+                  boxShadow: 6,
+                  transition: "transform 0.3s, box-shadow 0.3s",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: 12,
+                  },
+                }}
+              >
                 <CardMedia
                   component="img"
-                  height="200"
+                  height="220"
                   image={product.image}
                   alt={product.name}
+                  sx={{ objectFit: "cover", borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                 />
                 <CardContent>
-                  <Typography variant="h6">{product.name}</Typography>
-                  <Typography variant="body1">₹ {product.price}</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    {product.name}
+                  </Typography>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    ₹ {product.price}
+                  </Typography>
                 </CardContent>
 
-                {/* ✅ Action Buttons */}
-                <CardActions>
+                <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 2 }}>
                   <Button
+                    variant="contained"
+                    startIcon={<Edit />}
                     size="small"
-                    color="primary"
                     onClick={() => handleEdit(product._id)}
                   >
                     Edit
                   </Button>
                   <Button
-                    size="small"
+                    variant="outlined"
                     color="error"
+                    startIcon={<Delete />}
+                    size="small"
                     onClick={() => handleDelete(product._id)}
                   >
                     Delete

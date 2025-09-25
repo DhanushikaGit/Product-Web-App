@@ -7,6 +7,7 @@ import {
   Button,
   Paper,
   Stack,
+  Alert,
 } from "@mui/material";
 
 function AddProduct() {
@@ -26,7 +27,7 @@ function AddProduct() {
     e.preventDefault();
 
     if (!formData.name || !formData.price || !formData.image) {
-      setMessage("⚠️ Please fill in all fields");
+      setMessage({ type: "error", text: "Please fill in all fields" });
       return;
     }
 
@@ -44,32 +45,47 @@ function AddProduct() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("✅ Product added successfully!");
-        setFormData({ name: "", price: "", image: "" }); // reset form
+        setMessage({ type: "success", text: "Product added successfully!" });
+        setFormData({ name: "", price: "", image: "" });
       } else {
-        setMessage(`❌ Error: ${data.message}`);
+        setMessage({ type: "error", text: data.message || "Error adding product" });
       }
     } catch (err) {
-      setMessage("❌ Server error, try again later");
+      setMessage({ type: "error", text: "Server error, try again later" });
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h4" gutterBottom>
+      <Box sx={{ py: 6 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ textAlign: "center", fontWeight: 700, mb: 4 }}
+        >
           Add New Product
         </Typography>
 
-        <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            backgroundColor: "#f9f9f9",
+            transition: "all 0.3s",
+            "&:hover": { boxShadow: 12 },
+          }}
+        >
           <form onSubmit={handleSubmit}>
-            <Stack spacing={2}>
+            <Stack spacing={3}>
               <TextField
                 label="Product Name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 fullWidth
+                variant="outlined"
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
               />
               <TextField
                 label="Price"
@@ -78,6 +94,8 @@ function AddProduct() {
                 value={formData.price}
                 onChange={handleChange}
                 fullWidth
+                variant="outlined"
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
               />
               <TextField
                 label="Image URL"
@@ -85,21 +103,34 @@ function AddProduct() {
                 value={formData.image}
                 onChange={handleChange}
                 fullWidth
+                variant="outlined"
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
               />
-              <Button variant="contained" color="primary" type="submit">
+
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                type="submit"
+                sx={{
+                  borderRadius: 2,
+                  py: 1.5,
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#1976d2" },
+                }}
+              >
                 Add Product
               </Button>
             </Stack>
           </form>
 
           {message && (
-            <Typography
-              variant="body1"
-              color={message.includes("✅") ? "green" : "red"}
-              sx={{ mt: 2 }}
+            <Alert
+              severity={message.type}
+              sx={{ mt: 3, borderRadius: 2, fontWeight: 500 }}
             >
-              {message}
-            </Typography>
+              {message.text}
+            </Alert>
           )}
         </Paper>
       </Box>
